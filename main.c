@@ -43,6 +43,23 @@ void prompt_print() {
  */
 ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 
+/**
+ *
+ * @param input_buffer : reads users input
+ */
+void read_input(InputBuffer* input_buffer) {
+    ssize_t bytes_read = getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
+
+    if (bytes_read < 0) {
+        printf("Error reading input");
+        exit(EXIT_FAILURE);
+    }
+
+    // Ignore trailing newline
+    input_buffer->input_length = bytes_read - 1;
+    input_buffer->buffer[bytes_read - 1] = 0;
+}
+
 int main(int argc, char* argsv[]) {
     InputBuffer* input_buffer = new_input_buffer();
 
