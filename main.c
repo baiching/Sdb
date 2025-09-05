@@ -32,6 +32,17 @@ void prompt_print() {
     printf("sdb > ");
 }
 
+/**
+ *
+ * @param lineptr : a pointer to the variable we use to point to the buffer containing the read line.
+ *                  if it set to NULL, it gets mallocated by getline() and should be freed by the user,
+ *                  even if the command fails
+ * @param n : a pointer to the variable we use to save the size of allocated buffer.
+ * @param stream : the input stream to read from. We’ll be reading from standard input.
+ * @return value: the number of bytes read, which may be less than the size of the buffer
+ */
+ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+
 int main(int argc, char* argsv[]) {
     InputBuffer* input_buffer = new_input_buffer();
 
