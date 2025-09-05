@@ -1,10 +1,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define true 1
 #define false 0
 
+/**
+ * InputBuffer: it's a wrapper to store data
+ */
 typedef struct {
     char* buffer;
     size_t buffer_length;
@@ -20,10 +24,29 @@ InputBuffer* new_input_buffer() {
     return input_buffer;
 }
 
+/**
+ *  Introduces a prompt to the user
+ *  before taking input from the user
+ */
+void prompt_print() {
+    printf("sdb > ");
+}
+
 int main(int argc, char* argsv[]) {
     InputBuffer* input_buffer = new_input_buffer();
 
-    while (true)
+    while (true) {
+        print_prompt();
+        read_input(input_buffer);
+
+        if (strcmp(input_buffer->buffer, ".exit") == 0) {
+            close_input_buffer(input_buffer);
+            exit(EXIT_SUCCESS);
+        }
+        else {
+            printf("Unrecognized command '%s'.\n", input_buffer->buffer);
+        }
+    }
 
     return 0;
 }
