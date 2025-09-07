@@ -80,6 +80,8 @@ typedef enum {
     PREPARE_UNRECOGNIZED_STATEMENT
 } PrepareResult;
 
+
+
 /**
  * It is prepared statement which will contain CRUD eventually
  */
@@ -87,6 +89,11 @@ typedef enum {
     STATEMENT_SELECT,
     STATEMENT_INSERT
 } StatementType;
+
+typedef struct {
+    StatementType type;
+
+} Statement;
 
 int main(int argc, char* argsv[]) {
     InputBuffer* input_buffer = new_input_buffer();
