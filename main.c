@@ -75,13 +75,6 @@ MetaCommandResult* do_meta_command(InputBuffer* input_buffer) {
     }
 }
 
-typedef enum {
-    PREPARE_SUCCESS,
-    PREPARE_UNRECOGNIZED_STATEMENT
-} PrepareResult;
-
-
-
 /**
  * It is prepared statement which will contain CRUD eventually
  */
@@ -94,6 +87,26 @@ typedef struct {
     StatementType type;
 
 } Statement;
+
+typedef enum {
+    PREPARE_SUCCESS,
+    PREPARE_UNRECOGNIZED_STATEMENT
+} PrepareResult;
+
+PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement) {
+    if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
+        statement->type = STATEMENT_INSERT;
+        return PREPARE_SUCCESS;
+    }
+
+    if (strcmp(input_buffer->buffer, "select") == 0) {
+        statement->type = STATEMENT_SELECT;
+        return PREPARE_SUCCESS;
+    }
+
+    return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
 
 int main(int argc, char* argsv[]) {
     InputBuffer* input_buffer = new_input_buffer();
