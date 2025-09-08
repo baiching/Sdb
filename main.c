@@ -116,10 +116,10 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
 void execute_statement(Statement* statement) {
     switch (statement->type) {
         case (STATEMENT_INSERT):
-            printf("This is where INSERT goes");
+            printf("This is where INSERT goes.\n");
             break;
         case (STATEMENT_SELECT):
-            printf("This is where SELECT goes");
+            printf("This is where SELECT goes.\n");
             break;
 
     }
