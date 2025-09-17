@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,15 +84,42 @@ typedef enum {
     STATEMENT_INSERT
 } StatementType;
 
+/**
+ * this Row data structure is used by Statement object
+ * to insert data, only for insert
+ */
+#define COLUMN_USERNAME_SIZE 32
+#define COLUMN_EMAIL_SIZE 255
+
+typedef struct {
+    uint32_t id;
+    char username[COLUMN_USERNAME_SIZE];
+    char email[COLUMN_EMAIL_SIZE];
+} Row;
+
 typedef struct {
     StatementType type;
-
+    Row row_to_insert;
 } Statement;
 
 typedef enum {
     PREPARE_SUCCESS,
+    PREPARE_SYNTAX_ERROR,
     PREPARE_UNRECOGNIZED_STATEMENT
 } PrepareResult;
+
+/**
+ *this block is the place where the data will be stored
+*/
+#define size_of_attribute(struct, attribute) sizeof(((struct*)0)->attribute)
+
+const uint32_t ID_SIZE = size_of_attribute(Row, id);
+const uint32_t USERNAME_SIZE = size_of_attribute(Row, username);
+const uint32_t EMAIL_SIZE = size_of_attribute(Row, email);
+const uint32_t ID_OFFSET = 0;
+const uint32_t USERNAME_OFFSET = ID_OFFSET + ID_SIZE;
+const uint32_t EMAIL_OFFSET = USERNAME_OFFSET + USERNAME_SIZE;
+const uint32_t ROW_SIZE = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 
 /**
  * This is mini "sql compiler"
@@ -102,6 +130,14 @@ typedef enum {
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement) {
     if (strncmp(input_buffer->buffer, "insert", 6) == 0) {
         statement->type = STATEMENT_INSERT;
+        int args_input = sscanf(
+            input_buffer->buffer, "inser %d %s %s", &(statement->row_to_insert.id),
+            statement->row_to_insert.username, statement->row_to_insert.email
+            );
+        if (args_input < 3) {
+            return PREPARE_SYNTAX_ERROR;
+        }
+
         return PREPARE_SUCCESS;
     }
 
