@@ -97,6 +97,10 @@ typedef struct {
     char email[COLUMN_EMAIL_SIZE];
 } Row;
 
+void print_row(Row* row) {
+    printf("(%d, %s, %s)\n", row->id, row->username, row->email);
+}
+
 typedef struct {
     StatementType type;
     Row row_to_insert;
@@ -203,6 +207,42 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
     }
 
     return PREPARE_UNRECOGNIZED_STATEMENT;
+}
+
+/**
+ * Execute the statements block
+ */
+typedef enum {
+    EXECUTE_SUCCESS,
+    EXECUTE_TABLE_FULL
+} ExecuteResult;
+
+/**
+ * Performs insert operation after checking if the table is full, then it inserts at the end of last row
+ * It achieves it using serialize_now() fuction and row_slot() returns which address it has to store the row
+ * @param statement
+ * @param table
+ * @return
+ */
+ExecuteResult execute_insert(Statement* statement, Table *table) {
+    if (table->num_rows >= TABLE_MAX_ROWS) {
+        return EXECUTE_TABLE_FULL;
+    }
+
+    Row* row_to_insert = &(statement->row_to_insert);
+    serialize_row(row_to_insert, row_slot(table, table->num_rows));
+    table->num_rows += 1;
+
+    return EXECUTE_SUCCESS;
+}
+
+ExecuteResult execute_select(Statement* statement, Table *table) {
+    Row row;
+    for (uint32_t i = 0; i < table->num_rows; i++) {
+        deserialize_row(row_slot(table, i), &row);
+        print_row(&row);
+    }
+    return EXECUTE_SUCCESS;
 }
 
 void execute_statement(Statement* statement) {
