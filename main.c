@@ -245,15 +245,18 @@ ExecuteResult execute_select(Statement* statement, Table *table) {
     return EXECUTE_SUCCESS;
 }
 
-void execute_statement(Statement* statement) {
+/**
+ * This runs executes select and insert operations
+ * @param statement
+ * @param table
+ * @return
+ */
+ExecuteResult execute_statement(Statement* statement, Table* table) {
     switch (statement->type) {
         case (STATEMENT_INSERT):
-            printf("This is where INSERT goes.\n");
-            break;
+            return execute_insert(statement, table);
         case (STATEMENT_SELECT):
-            printf("This is where SELECT goes.\n");
-            break;
-
+            return execute_select(statement, table);
     }
 }
 
