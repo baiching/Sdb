@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.28.3)
-project(Sdb C)
+project(Sdb C CXX)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(Sdb main.c
-        test/test_db.cpp)
+add_executable(Sdb main.c)
+
+add_subdirectory(test)
